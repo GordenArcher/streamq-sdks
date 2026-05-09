@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "streamq-python"
+version = "0.1.0"
+description = "Official Python SDK for the streamq message broker"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "Gorden Archer", email = "archergorden@gmail.com" }]
+keywords = ["streamq", "message-broker", "pubsub", "websocket", "sse"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+
+dependencies = [
+    # aiohttp covers both async HTTP and WebSocket in one library.
+    # We use it for all async transport, no need for separate ws library.
+    "aiohttp>=3.9.0",
+    # httpx for the sync client wrapper, cleaner than requests for our use
+    # case and supports both sync and async modes in the same API.
+    "httpx>=0.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-aiohttp>=1.0.0",
+    "pytest-httpserver>=1.0.0",
+    "anyio>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/GordenArcher/streamq-sdks"
+Repository = "https://github.com/GordenArcher/streamq-sdks"
+"Bug Tracker" = "https://github.com/GordenArcher/streamq-sdks/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["streamq"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

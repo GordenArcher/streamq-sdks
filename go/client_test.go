@@ -61,9 +61,10 @@ func errorResponse(w http.ResponseWriter, status int, message string) {
 }
 
 // newTestClient creates a Client pointed at the mock broker.
-func newTestClient(t *testing.T, brokerURL string) *Client {
+func newTestClient(t *testing.T, brokerURL string, opts ...ClientOption) *Client {
 	t.Helper()
-	c, err := NewClient(brokerURL, WithHTTPTimeout(5*time.Second))
+	opts = append([]ClientOption{WithHTTPTimeout(5 * time.Second)}, opts...)
+	c, err := NewClient(brokerURL, opts...)
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
@@ -270,12 +271,12 @@ func TestConsumer_SSE_ReceivesMessages(t *testing.T) {
 	})
 
 	broker := newMockBroker(t, mux)
-	client := newTestClient(t, broker.URL())
+	client := newTestClient(t, broker.URL(), WithMaxReconnectAttempts(1))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	consumer, err := client.Subscribe(ctx, "test", WithProtocol(ProtocolSSE), WithMaxReconnectAttempts(1))
+	consumer, err := client.Subscribe(ctx, "test", WithProtocol(ProtocolSSE))
 	if err != nil {
 		t.Fatalf("Subscribe: %v", err)
 	}
@@ -344,7 +345,6 @@ func TestConsumer_MaxReconnects_StopsAfterLimit(t *testing.T) {
 	ctx := context.Background()
 	consumer, _ := client.Subscribe(ctx, "test",
 		WithProtocol(ProtocolSSE),
-		WithMaxReconnectAttempts(3),
 	)
 
 	// Drain — should stop after 3 failed attempts.

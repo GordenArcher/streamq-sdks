@@ -6,7 +6,7 @@ Official client SDKs for [streamq](https://github.com/GordenArcher/streamq) — 
 
 | Language | Package | Install |
 |----------|---------|---------|
-| Go | `github.com/GordenArcher/streamq-go` | `go get github.com/GordenArcher/streamq-go` |
+| Go | `github.com/GordenArcher/streamq-sdks/go` | `go get github.com/GordenArcher/streamq-sdks/go` |
 | Python | `streamq-python` | `pip install streamq-python` |
 | JavaScript / TypeScript | `streamq-js` | `npm install streamq-js` |
 | Rust | `streamq-rs` | `cargo add streamq-rs` |
@@ -20,7 +20,7 @@ Each SDK lives in its own subdirectory with its own README, package config, and 
 ### Go
 
 ```go
-import streamq "github.com/GordenArcher/streamq-go"
+import streamq "github.com/GordenArcher/streamq-sdks/go"
 
 client, _ := streamq.NewClient("http://localhost:8080")
 defer client.Close()

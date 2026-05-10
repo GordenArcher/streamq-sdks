@@ -1,3 +1,23 @@
-node_modules
-.pytest_cache
+# macOS
 .DS_Store
+
+# JavaScript / TypeScript
+node_modules/
+**/node_modules/
+javascript/dist/
+coverage/
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+**/.pytest_cache/
+python/.venv/
+python/venv/
+python/build/
+python/dist/
+
+# Rust
+rust/target/

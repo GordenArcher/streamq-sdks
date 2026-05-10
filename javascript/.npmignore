@@ -1,0 +1,13 @@
+# Source — callers get the compiled dist/ only
+src/
+tests/
+
+# Config files, not needed at runtime
+tsconfig.json
+vitest.config.*
+
+# Dev artifacts
+*.log
+.DS_Store
+node_modules/
+coverage/

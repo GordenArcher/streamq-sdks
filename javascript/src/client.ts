@@ -173,12 +173,16 @@ export class StreamqClient {
     const timer = setTimeout(() => controller.abort(), this.timeout);
 
     try {
-      const res = await fetch(this.baseUrl + path, {
+      const init: RequestInit = {
         method,
         headers: body ? { "Content-Type": "application/json" } : {},
-        body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
-      });
+      };
+      if (body) {
+        init.body = JSON.stringify(body);
+      }
+
+      const res = await fetch(this.baseUrl + path, init);
 
       // Parse JSON regardless of status, the broker always returns JSON.
       const data = (await res.json()) as Record<string, unknown>;

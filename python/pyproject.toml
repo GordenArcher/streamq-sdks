@@ -10,24 +10,24 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
 authors = [{ name = "Gorden Archer", email = "archergorden@gmail.com" }]
-keywords = ["streamq", "message-broker", "pubsub", "websocket", "sse"]
+keywords = ["streamq", "message-broker", "pubsub", "websocket", "sse", "async"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet",
+    "Typing :: Typed",
 ]
 
 dependencies = [
-    # aiohttp covers both async HTTP and WebSocket in one library.
-    # We use it for all async transport, no need for separate ws library.
     "aiohttp>=3.9.0",
-    # httpx for the sync client wrapper, cleaner than requests for our use
-    # case and supports both sync and async modes in the same API.
     "httpx>=0.27.0",
 ]
 
@@ -35,18 +35,32 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
-    "pytest-aiohttp>=1.0.0",
-    "pytest-httpserver>=1.0.0",
+    "pytest-aiohttp>=1.0.5",
     "anyio>=4.0.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/GordenArcher/streamq-sdks"
 Repository = "https://github.com/GordenArcher/streamq-sdks"
+Documentation = "https://github.com/GordenArcher/streamq-sdks/tree/main/python"
 "Bug Tracker" = "https://github.com/GordenArcher/streamq-sdks/issues"
+Changelog = "https://github.com/GordenArcher/streamq-sdks/releases"
 
 [tool.hatch.build.targets.wheel]
 packages = ["streamq"]
+
+# Exclude test and dev files from the wheel
+[tool.hatch.build.targets.wheel.force-include]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "tests/",
+    "*.pyc",
+    "__pycache__/",
+    ".pytest_cache/",
+    "dist/",
+    "*.egg-info/",
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

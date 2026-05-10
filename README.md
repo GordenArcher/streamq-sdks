@@ -1,172 +1,170 @@
 # streamq-sdks
 
-Official client SDKs for [streamq](https://github.com/GordenArcher/streamq) — a lightweight message broker with WebSocket and SSE delivery.
+Official client SDKs for [streamq](https://github.com/GordenArcher/streamq) — a lightweight message broker with WebSocket and SSE delivery, Prometheus metrics, and WAL-backed persistence.
 
 ## SDKs
 
-| Language | Package | Status |
-|----------|---------|--------|
-| Go | `github.com/GordenArcher/streamq-go` | ✅ Available |
-| Python | `streamq-python` (PyPI) | 🔜 Coming soon |
-| JavaScript | `streamq-js` (npm) | 🔜 Coming soon |
-| Rust | `streamq-rs` (crates.io) | 🔜 Coming soon |
+| Language | Package | Install |
+|----------|---------|---------|
+| Go | `github.com/GordenArcher/streamq-go` | `go get github.com/GordenArcher/streamq-go` |
+| Python | `streamq-python` | `pip install streamq-python` |
+| JavaScript / TypeScript | `streamq-js` | `npm install streamq-js` |
+| Rust | `streamq-rs` | `cargo add streamq-rs` |
 
-## Go SDK
+Each SDK lives in its own subdirectory with its own README, package config, and test suite. No real broker is required to run the tests — all SDKs use in-process mock servers.
 
-```bash
-go get github.com/GordenArcher/streamq-go
-```
+---
 
-### Quick start
+## Quick starts
 
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-
-    streamq "github.com/GordenArcher/streamq-go"
-)
-
-func main() {
-    client, err := streamq.NewClient("http://localhost:8080")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer client.Close()
-
-    ctx := context.Background()
-
-    // Create a topic
-    client.CreateTopic(ctx, "payments")
-
-    // Publish a message
-    result, err := client.Publish(ctx, "payments", []byte(`{"amount":100,"currency":"GHS"}`))
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Printf("published at offset %d\n", result.Offset)
-
-    // Subscribe — channel-based, auto-reconnects
-    consumer, err := client.Subscribe(ctx, "payments",
-        streamq.WithGroup("billing"),
-        streamq.WithFromOffset(0),
-    )
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer consumer.Close()
-
-    for msg := range consumer.Messages() {
-        fmt.Printf("offset %d: %s\n", msg.Offset, msg.Payload)
-        consumer.Ack(msg.Offset) // explicit ack for at-least-once delivery
-    }
-
-    if err := consumer.Err(); err != nil {
-        log.Printf("consumer stopped: %v", err)
-    }
-}
-```
-
-### Topic management
+### Go
 
 ```go
-// Create
-err := client.CreateTopic(ctx, "events")
+import streamq "github.com/GordenArcher/streamq-go"
 
-// List all topics
-topics, err := client.ListTopics(ctx)
+client, _ := streamq.NewClient("http://localhost:8080")
+defer client.Close()
 
-// Get single topic stats
-info, err := client.GetTopic(ctx, "events")
-fmt.Printf("%s: %d messages, latest offset %d\n", info.Name, info.MessageCount, info.LatestOffset)
+client.CreateTopic(ctx, "payments")
 
-// Delete
-err = client.DeleteTopic(ctx, "events")
-```
+result, _ := client.Publish(ctx, "payments", []byte(`{"amount":100}`))
+fmt.Printf("published at offset %d\n", result.Offset)
 
-### Publishing
-
-```go
-// Publish raw bytes — encoding is up to you (JSON, Protobuf, plain text)
-result, err := client.Publish(ctx, "payments", []byte(`{"amount":100}`))
-fmt.Printf("offset: %d, timestamp: %s\n", result.Offset, result.Timestamp)
-```
-
-### Subscribing
-
-```go
-// Broadcast — receive every message (no group)
-consumer, _ := client.Subscribe(ctx, "payments")
-
-// Consumer group — one message delivered to one subscriber in the group
 consumer, _ := client.Subscribe(ctx, "payments",
     streamq.WithGroup("billing"),
-)
-
-// Replay from the beginning of retained history
-consumer, _ := client.Subscribe(ctx, "payments",
     streamq.WithFromOffset(0),
 )
-
-// Resume from a specific offset
-consumer, _ := client.Subscribe(ctx, "payments",
-    streamq.WithFromOffset(42),
-)
-
-// SSE instead of WebSocket (no ack support, works through more proxies)
-consumer, _ := client.Subscribe(ctx, "payments",
-    streamq.WithProtocol(streamq.ProtocolSSE),
-)
-```
-
-### Error handling
-
-```go
-import "errors"
-
-err := client.CreateTopic(ctx, "payments")
-
-var conflict *streamq.ErrConflict
-if errors.As(err, &conflict) {
-    // Topic already exists — that's fine
-}
-
-var notFound *streamq.ErrNotFound
-if errors.As(err, &notFound) {
-    // Topic doesn't exist
+for msg := range consumer.Messages() {
+    fmt.Printf("offset %d: %s\n", msg.Offset, msg.Payload)
+    consumer.Ack(msg.Offset)
 }
 ```
 
-### Client options
+### Python (async)
 
-```go
-client, err := streamq.NewClient("http://localhost:8080",
-    streamq.WithHTTPTimeout(5 * time.Second),
-    streamq.WithReconnectDelay(1 * time.Second),
-    streamq.WithMaxReconnectAttempts(10), // 0 = retry forever
-)
+```python
+from streamq import AsyncClient
+
+async with AsyncClient("http://localhost:8080") as client:
+    await client.create_topic("payments")
+    await client.publish("payments", b'{"amount": 100}')
+
+    async with client.subscribe("payments", group="billing", from_offset=0) as consumer:
+        async for msg in consumer:
+            print(f"offset {msg.offset}: {msg.payload}")
+            await consumer.ack(msg.offset)
 ```
+
+### Python (sync)
+
+```python
+from streamq import SyncClient
+
+client = SyncClient("http://localhost:8080")
+client.create_topic("payments")
+client.publish("payments", b'{"amount": 100}')
+
+with client.subscribe("payments", group="billing", from_offset=0) as consumer:
+    for msg in consumer:
+        print(f"offset {msg.offset}: {msg.payload}")
+        consumer.ack(msg.offset)
+```
+
+### JavaScript / TypeScript
+
+```ts
+import { StreamqClient } from "streamq-js";
+
+const client = new StreamqClient("http://localhost:8080");
+
+await client.createTopic("payments");
+await client.publish("payments", new TextEncoder().encode('{"amount":100}'));
+
+const consumer = client.subscribe("payments", {
+    group: "billing",
+    fromOffset: 0,
+});
+
+for await (const msg of consumer) {
+    console.log(`offset ${msg.offset}:`, new TextDecoder().decode(msg.payload));
+    consumer.ack(msg.offset);
+}
+```
+
+### Rust
+
+```rust
+use streamq::{StreamqClient, ConsumerOptions};
+
+#[tokio::main]
+async fn main() -> streamq::Result<()> {
+    let client = StreamqClient::new("http://localhost:8080")?;
+
+    client.create_topic("payments").await?;
+    let result = client.publish("payments", b"{\"amount\": 100}").await?;
+    println!("published at offset {}", result.offset);
+
+    let mut consumer = client.subscribe("payments", ConsumerOptions {
+        group: "billing".to_string(),
+        from_offset: 0,
+        ..Default::default()
+    });
+
+    while let Some(msg) = consumer.next().await? {
+        println!("offset {}: {:?}", msg.offset, msg.payload);
+        consumer.ack(msg.offset);
+    }
+
+    Ok(())
+}
+```
+
+---
 
 ## Delivery guarantees
 
-| Setup | Guarantee | How |
-|-------|-----------|-----|
-| WebSocket + group + `Ack()` | At-least-once | Broker redelivers from last committed offset on reconnect |
-| WebSocket + no group | At-most-once | Auto-committed on send |
+| Setup | Guarantee | Notes |
+|-------|-----------|-------|
+| WebSocket + group + `ack()` | At-least-once | Broker redelivers from last committed offset on reconnect |
+| WebSocket, no group | At-most-once | Auto-committed on send |
 | SSE (any) | At-most-once | Unidirectional — no ack channel |
 
-## Running tests
+---
+
+## Consumer API comparison
+
+Each SDK exposes the same semantics with idiomatic syntax for its language:
+
+| Feature | Go | Python | JavaScript | Rust |
+|---------|----|--------|------------|------|
+| Consumer style | Channel (`range`) | Async generator (`async for`) | Async generator (`for await`) | Async loop (`while let`) |
+| Sync support | ✅ (channels are sync-friendly) | ✅ `SyncClient` | — | — |
+| Ack | `consumer.Ack(offset)` | `await consumer.ack(offset)` | `consumer.ack(offset)` | `consumer.ack(offset)` |
+| Close | `consumer.Close()` | `await consumer.close()` | `consumer.close()` | `consumer.close()` / drop |
+| Auto-reconnect | ✅ | ✅ | ✅ | ✅ |
+| SSE support | ✅ | ✅ | ✅ | ✅ |
+| WebSocket support | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## Running all tests
 
 ```bash
-cd go
-go test ./... -race -v
+# Go
+cd go && go test ./... -race -v
+
+# Python
+cd python && pip install -e ".[dev]" && pytest tests/ -v
+
+# JavaScript
+cd javascript && npm install && npm test
+
+# Rust
+cd rust && cargo test
 ```
 
-Tests use an in-process mock broker — no real streamq instance required.
+---
 
 ## Broker
 
-The broker is at [github.com/GordenArcher/streamq](https://github.com/GordenArcher/streamq).
+The broker that these SDKs connect to is at [github.com/GordenArcher/streamq](https://github.com/GordenArcher/streamq).

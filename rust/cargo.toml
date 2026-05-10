@@ -1,0 +1,55 @@
+[package]
+name = "streamq-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Gorden Archer archergorden@gmail.com"]
+description = "Official Rust SDK for the streamq message broker"
+license = "MIT"
+homepage = "https://github.com/GordenArcher/streamq-sdks"
+repository = "https://github.com/GordenArcher/streamq-sdks"
+keywords = ["streamq", "message-broker", "pubsub", "websocket", "sse"]
+categories = ["network-programming", "asynchronous"]
+readme = "README.md"
+
+[dependencies]
+# Async HTTP client — used for topic management and publish.
+# Features: json for serde integration, rustls-tls to avoid OpenSSL dep.
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"] }
+
+# WebSocket client for the broker's WS delivery endpoint.
+tokio-tungstenite = { version = "0.23", features = ["rustls-tls-webpki-roots"] }
+
+# Async runtime — the foundation for everything async in Rust.
+tokio = { version = "1", features = ["full"] }
+
+# JSON serialisation/deserialisation.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Base64 encode/decode for payload transport.
+base64 = "0.22"
+
+# Futures utilities — used for stream combinators in SSE parsing.
+futures-util = "0.3"
+
+# URL parsing and construction.
+url = "2"
+
+# Timestamp type with serde support.
+chrono = { version = "0.4", features = ["serde"] }
+
+# Async trait support — required for trait methods that return futures.
+# Can be removed once async-fn-in-trait is stable in Rust.
+async-trait = "0.1"
+
+# HTTP types shared between reqwest and tungstenite.
+http = "1"
+
+[dev-dependencies]
+# HTTP mock server for tests — no real broker required.
+wiremock = "0.6"
+tokio = { version = "1", features = ["full"] }
+
+[lib]
+name = "streamq"
+path = "src/lib.rs"

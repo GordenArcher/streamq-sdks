@@ -1,0 +1,11 @@
+/Users/macbookpro/Documents/more_projects/streamq-sdks/rust/target/debug/deps/bitflags-a6f2feb5f7882c01.d: /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/lib.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/iter.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/parser.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/traits.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/public.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/internal.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/external.rs
+
+/Users/macbookpro/Documents/more_projects/streamq-sdks/rust/target/debug/deps/libbitflags-a6f2feb5f7882c01.rmeta: /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/lib.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/iter.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/parser.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/traits.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/public.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/internal.rs /Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/external.rs
+
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/lib.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/iter.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/parser.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/traits.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/public.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/internal.rs:
+/Users/macbookpro/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bitflags-2.11.1/src/external.rs:

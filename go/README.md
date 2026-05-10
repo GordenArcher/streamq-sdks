@@ -5,7 +5,7 @@ Official Go SDK for [streamq](https://github.com/GordenArcher/streamq) — a lig
 ## Installation
 
 ```bash
-go get github.com/GordenArcher/streamq-go
+go get github.com/GordenArcher/streamq-sdks/go
 ```
 
 Requires Go 1.22+.
@@ -22,7 +22,7 @@ import (
     "fmt"
     "log"
 
-    streamq "github.com/GordenArcher/streamq-go"
+    streamq "github.com/GordenArcher/streamq-sdks/go"
 )
 
 func main() {

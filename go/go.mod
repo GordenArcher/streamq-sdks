@@ -1,4 +1,4 @@
-module github.com/GordenArcher/streamq-go
+module github.com/GordenArcher/streamq-sdks/go
 
 go 1.22
 
